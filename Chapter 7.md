@@ -33,3 +33,5 @@ Agar aap reflog information ko git log ke output ki tarah format mein dekhna cha
 $ git log -g (branch name)
 ```
 Agar aap git show HEAD@{2.months.ago} run karte hain, to yeh matching commit tabhi dikhayega jab aapne project ko kam se kam do mahine pehle clone kiya ho—agar aapne ise isse recent mein clone kiya, to aapko sirf aapka pehla local commit dikhai dega.
+# Ancestry References
+
