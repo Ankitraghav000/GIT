@@ -34,4 +34,16 @@ $ git log -g (branch name)
 ```
 Agar aap git show HEAD@{2.months.ago} run karte hain, to yeh matching commit tabhi dikhayega jab aapne project ko kam se kam do mahine pehle clone kiya ho—agar aapne ise isse recent mein clone kiya, to aapko sirf aapka pehla local commit dikhai dega.
 # Ancestry References
+Git mein aap commit ko uski ancestry se refer kar sakte ho. Agar aap reference ke end mein ^ (caret) lagate ho, to Git us commit ka parent dikhata hai. Example:
+```
+$ git show HEAD^
+```
+Yeh command current commit ka parent dikhata hai. Merge commits ke case mein, aap ^2 likhkar second parent bhi dekh sakte ho:
+```
+$ git show d921970^2
+```
+Tilde ~ bhi parent ko refer karta hai, lekin yeh ek step pehle ke parent tak jata hai. Jaise, HEAD~2 ka matlab hai "pehle parent ka parent":
+```
+$ git show HEAD~2
+```
 
