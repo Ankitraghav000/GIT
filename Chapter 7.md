@@ -36,14 +36,58 @@ Agar aap git show HEAD@{2.months.ago} run karte hain, to yeh matching commit tab
 # Ancestry References
 Git mein aap commit ko uski ancestry se refer kar sakte ho. Agar aap reference ke end mein ^ (caret) lagate ho, to Git us commit ka parent dikhata hai. Example:
 ```
-$ git show HEAD^
+$ git show (branch name)^
 ```
+Yeh command aapke Git repository ka commit history ek graphical format mein dikhati hai. Yahaan:
+```
+git log --pretty=format:'%h %s' --graph
+```
+- %h se commit ka short hash dikhaya jata hai.
+- %s se commit message show hoti hai.
+-  --graph option ek graphical representation banata hai jo branch aur merge structure ko easily samajhne mein madad karta hai.
+
+Isse aapko ek clean aur concise history view milta hai jo branches aur merges ko samajhne mein help karta hai.
+
 Yeh command current commit ka parent dikhata hai. Merge commits ke case mein, aap ^2 likhkar second parent bhi dekh sakte ho:
 ```
-$ git show d921970^2
+$ git show (branch name)^2
 ```
-Tilde ~ bhi parent ko refer karta hai, lekin yeh ek step pehle ke parent tak jata hai. Jaise, HEAD~2 ka matlab hai "pehle parent ka parent":
+Tilde ~ bhi parent ko refer karta hai, lekin yeh ek step pehle ke parent tak jata hai. Jaise, (branch name)~2 ka matlab hai "pehle parent ka parent":
 ```
-$ git show HEAD~2
+$ git show (branch name)~2
 ```
+# Commit Ranges
+agar aapke paas bahut saari branches hain, toh aap range specifications ka istemal karke yeh jaan sakte hain ki “Is branch mein kya kaam hai jo maine abhi tak apni main branch mein merge nahi kiya hai?
+
+Agar aap dekhna chahte hain ki aapki experiment branch mein kya hai jo abhi tak aapki master branch mein merge nahi hua, toh aap Git se keh sakte hain:
+```
+$ git log master..experiment
+```
+Agar aap doosri taraf dekhna chahte hain — saare commits master mein jo experiment mein nahi hain — toh aap branch names ko reverse kar sakte hain.
+```
+$ git log experiment..master
+```
+Ek aur aam istemal is syntax ka yeh hai ki aap dekh sakte hain ki aap kya remote par push karne wale hain:
+```
+$ git log origin/master..HEAD
+```
+```
+$ git log origin/master..
+```
+Yahaan Git ek taraf missing hone par HEAD ko substitute kar deta hai.
+## Multiple Points
+Agar aapko do se zyada branches ko specify karna hai, toh Git ^ character ya --not ka istemal karke yeh karne ki suvidha deta hai. 
+Agar aap yeh dekhna chahte hain ki refA ya refB mein kaunse commits hain jo refC se reachable nahi hain, toh:
+```
+$ git log refA refB ^refC
+$ git log refA refB --not refC
+```
+## Triple Dot
+Triple-dot syntax un commits ko specify karta hai jo do references mein se kisi ek se reachable hain lekin dono se nahi. Example ke liye:
+```
+$ git log master...experiment
+```
+Isse sirf un commits ka information milega jo dono branches ke common references nahi hain.
+
+
 
