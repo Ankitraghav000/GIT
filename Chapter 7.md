@@ -88,6 +88,31 @@ Triple-dot syntax un commits ko specify karta hai jo do references mein se kisi 
 $ git log master...experiment
 ```
 Isse sirf un commits ka information milega jo dono branches ke common references nahi hain.
+# Interactive Staging
+Interactive Staging ke andar hum alag-alag braches ke through jo changes hue hai unhe ek bar me he stage kar sakte hai.
+```
+$ git add -i  
+          staged     unstaged path  
+ 1:    unchanged        +0/-1 TODO  
+ 2:    unchanged        +1/-1 index.html  
+ 3:    unchanged        +5/-1 lib/simplegit.rb  
+*** Commands ***  
+ 1: [s]tatus  
+ 2: [u]pdate  
+ 3: [r]evert  
+ 4: [a]dd untracked  
+ 5: [p]atch  
+ 6: [d]iff  
+ 7: [q]uit  
+ 8: [h]elp  
+What now>
+```
+Yeh command aapko staged aur unstaged changes ka ek concise view dikhata hai, jo aap git status mein dekhte hain, par yeh aur zyada informative hota hai. Yeh aapko left mein staged aur right mein unstaged changes dikhata hai
+
+- Agar aap u ya 2 (update ke liye) type karte hain, to aap se poocha jayega ki aap kaunsi files ko stage karna chahte hain:
+-sterisk (*) file ke next aata hai jo select ki gayi hai staging ke liye. Agar aap Enter press karte hain bina kuch type kiye, Git selected files ko stage kar dega:
+  
+## Files ko Unstage Karna
 
 
 
