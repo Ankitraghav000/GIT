@@ -111,8 +111,85 @@ Yeh command aapko staged aur unstaged changes ka ek concise view dikhata hai, jo
 
 - Agar aap u ya 2 (update ke liye) type karte hain, to aap se poocha jayega ki aap kaunsi files ko stage karna chahte hain:
 -sterisk (*) file ke next aata hai jo select ki gayi hai staging ke liye. Agar aap Enter press karte hain bina kuch type kiye, Git selected files ko stage kar dega:
-  
-## Files ko Unstage Karna
 
+  Isi trarah aap ek ek karke sabhi options ko explore kar sakte hai.
+# Staging Patches
 
+Git mein aap files ke kuch parts ko stage kar sakte ho, baaki ko nahi. Jaise agar aapne apne simplegit.rb file mein do changes kiye hain aur aap sirf ek change ko stage karna chahte ho, toh Git mein yeh kaafi aasaan hai. Pehle batayi gayi interactive prompt se, aap "p" ya "5" (patch) type karo. Git aapse poochega ki kaunsi file ka hissa aapko stage karna hai; fir har section ke liye, woh file ka diff hunk dikhayega aur poochega ki kya aap usse stage karna chahte ho:
+```
+diff --git a/lib/simplegit.rb b/lib/simplegit.rb  
+index dd5ecc4..57399e0 100644  
+--- a/lib/simplegit.rb  
++++ b/lib/simplegit.rb  
+@@ -22,7 +22,7 @@ class SimpleGit  
+   end
+  
+   def log(treeish = 'master')  
+-    command("git log -n 25 #{treeish}")  
++    command("git log -n 30 #{treeish}")  
+   end
+  
+   def blame(path)  
+```
+Stage this hunk [y,n,a,d,/,j,J,g,e,?]?
+Aapke paas kaafi saare options hain. Agar aap ? type karoge toh aapko options ki list dikhayi degi:
+```Stage this hunk [y,n,a,d,/,j,J,g,e,?]? ?  
+y - is hunk ko stage karo  
+n - is hunk ko stage mat karo  
+a - is hunk aur baaki sab hunks ko stage karo  
+d - is hunk ko aur baaki sab hunks ko stage mat karo  
+g - ek hunk chunne ke liye  
+/ - ek regex match karne wale hunk ko search karo  
+j - is hunk ko undecided chhodo, agla undecided hunk dekho  
+J - is hunk ko undecided chhodo, agla hunk dekho  
+k - is hunk ko undecided chhodo, previous undecided hunk dekho  
+K - is hunk ko undecided chhodo, previous hunk dekho  
+s - current hunk ko chhote hunks mein split karo  
+e - manually current hunk edit karo  
+? - help dikhaye
+```
+<b> Note </b>
+- Aapko interactive mode mein hone ki zarurat nahi hai partial-file staging ke liye — aap command line par git add -p ya git add --patch use karke bhi ye kar sakte ho.
+Iske alawa, aap patch mode ko files ko partially reset karne ke liye git reset --patch use kar sakte hai.
+
+# Stashing and Cleaning in Git
+Kabhi-kabhi jab aap apne project par kaam kar rahe hote ho, toh cheezein thodi messy ho sakti hain, aur aapko kuch aur kaam karne ke liye branch switch karna hota hai. Problem yeh hoti hai ki aap apna half-done work commit nahi karna chahte, taki baad mein uss point par waapas aa sakein. Is problem ka solution hai git stash command. git stash command command ka use karke hum apni file ko secure kar sakte hai.
+
+Agar aap branch switch karna chahte ho bina changes ko commit kiye, toh aap changes ko stash kar sakte ho git stash ya git stash push command ke saath.
+```
+$ git stash  or $ git stash push
+```
+agar aap kisi dusri branch par changes apply krna chate hai to ye command use kar sakte hai.
+```
+$ git stash apply
+```
+Agar aap specific stash apply karna chahte hain, toh stash name ke saath apply kar sakte hain:
+```
+git stash list
+$ git stash drop stash@{0}
+```
+New branch banakar stash apply karna:
+```
+git stash branch (new branch)
+```
+Agar aapko apne working directory se kuch files ko hata dena hai bina stash kiye, toh git clean command use hota hai. Yeh command untracked files ko remove karta hai. Agar aap dekhna chahte hain ki kaunse files remove honge, toh -n ya --dry-run option ke saath run karein:
+```
+$ git clean -n -d
+```
+# Signing Your Work
+Git cryptographically secure hai, lekin yeh foolproof nahi hai. Agar aap internet se dusron ka kaam le rahe hain aur yeh verify karna chahte hain ki commits waqai mein trusted source se hain, toh Git ke paas kuch tareeke hain jisse aap apna kaam sign aur verify kar sakte hain GPG ke zariye.
+#gpg key setup aap google ya chatgpt ki help se karsakte hai.
+Ek baar jab aapke paas private key hai, aap Git ko ise sign karne ke liye configure kar sakte hain:
+```
+$ git config --global user.signingkey (private key)
+```
+Agar aapke paas GPG private key set up hai, toh aap naye tags ko sign kar sakte hain. 
+```
+$ git tag -s v1.5 -m 'my signed 1.5 tag'
+```
+### Tags Ki Verification
+  Yeh command GPG ka istemal karke signature verify karti hai. 
+  ```
+$ git tag -v v1.5
+```
 
