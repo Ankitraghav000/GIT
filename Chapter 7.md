@@ -192,4 +192,47 @@ $ git tag -s v1.5 -m 'my signed 1.5 tag'
   ```
 $ git tag -v v1.5
 ```
+# Searching
+Aapko aksar koi function kaha par call ya define kiya gaya hai.Git kuch useful tools provide karta hai jo code aur commits ko jaldi aur aasani se search karne mein madad karte hain.
+```
+$ git grep -n (FILE NAME )
+```
+Agar aapko matches ki jagah file count chahiye, toh -c ya --count option ka use karein:
+```
+$ git grep --count (TEXT/FILE NAME)
+```
+### Git Log Searching
+Agar aapko ye jaanne ki zarurat ho ki koi term kab exist hui ya introduce hui thi, toh git log ka use karke specific commits ko search karna mumkin hai.
+```
+$ git log -S (commit name) --oneline
+```
+# Rewriting History
+aap already hui commits ko rewrite kar sakte hain.
+```
+git commit --amend
+```
+### Changing Multiple Commit Messages
+Agar aapko apne Git history mein peeche ki taraf kisi commit ko modify karna hai, toh aapko thoda complex tools ka istemal karna padega. Git mein koi specific modify-history tool nahi hota, lekin aap rebase tool ka istemal karke commits ka ek series ko HEAD par rebase kar sakte hain.
+```
+git rebase -i HEAD~3
+```
+Yahan HEAD~3 ka matlab hai ki aap teen recent commits ko modify karna chahte hain, lekin yeh chaar commits tak ke parents ko designate kar raha hai.
+# Git commmit ammend
+Aap git commit --amend command se commit message ko badal sakte hain. Jab aap changes kar lein, to git rebase --continue command chalayen:
+```
+$ git commit --amend
+$ git rebase --continue
+```
+- Use amend for quick fixes on the last commit, and rebase -i for more detailed changes across multiple commits.
+# Squashing Commits
+Agar tum multiple commits ko ek single commit mein squash karna chahte ho, to interactive rebase ka use kar sakte ho. Rebase message mein helpful instructions hoti hain, jaise:
+```
+git rebase -i HEAD~3
+pick f7f3f6d Change my name a bit
+squash 310154e Update README formatting and add blame
+squash a5f4a0d Add cat-file
+```
+# Splitting Commits
+Splitting a commit in Git ka matlab hai ek commit ko multiple commits mein todna. Agar aapko ek commit ko do ya zyada commits mein todna hai, toh aap rebase -i (interactive rebase) ka use kar sakte ho. Jaise, maan lo aapke paas 3 commits hain, aur beech wale commit ko do parts mein todna hai. Us commit ko "edit" mein change karo rebase script mein:
+
 
