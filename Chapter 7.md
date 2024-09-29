@@ -232,7 +232,45 @@ pick f7f3f6d Change my name a bit
 squash 310154e Update README formatting and add blame
 squash a5f4a0d Add cat-file
 ```
+iske liye aap emac editor ka use kar sakte hai. jab editor open hoga tab app pick option par click krke upr ki taraf rebase ka option hota hai usme se aap squash option select kar sakte hai.iske baad new editor open hoga jisme aap combine commits ka new commit name de sakte hai.
 # Splitting Commits
 Splitting a commit in Git ka matlab hai ek commit ko multiple commits mein todna. Agar aapko ek commit ko do ya zyada commits mein todna hai, toh aap rebase -i (interactive rebase) ka use kar sakte ho. Jaise, maan lo aapke paas 3 commits hain, aur beech wale commit ko do parts mein todna hai. Us commit ko "edit" mein change karo rebase script mein:
+```
+pick f7f3f6d Change my name a bit  
+edit 310154e Update README formatting and add blame  
+pick a5f4a0d Add cat-file
+```
+Jab tum script save karke exit karoge, Git tumhe command line pe le aayega. Ab tum is commit ka mixed reset karoge taaki wo changes unstaged ho jaayein:
+```
+$ git reset HEAD^
+```
+Iske baad tum apne desired cha
+nges ko stage karke commit karoge. Maan lo pehle tum README ko stage karte ho aur commit karte ho:
+```
+$ git add README  
+$ git commit -m 'Update README formatting'
+```
+Phir tum doosra file stage karke doosra commit banate ho:
+```
+$ git add lib/simplegit.rb  
+$ git commit -m 'Add blame'
+```
+Phir tum doosra file stage karke doosra commit banate ho:
+```
+$ git add lib/simplegit.rb  
+$ git commit -m 'Add blame'
+```
+Jab tum yeh sab commits kar loge, tab tum git rebase --continue chalaoge:
+```
+$ git rebase --continue
+```
+Deleting a commit
+Agar tumhe koi commit delete karna hai, toh tum rebase -i ka use karke us commit ko hata sakte ho. Yaha steps diye gaye hain jo tum follow kar sakte ho:
+```
+git rebase -i 
+```
+jab aap emac editor open hoga tab aapko commit pr pointer ko lejana hai and then rebase option pe click krke aap kill option select kar sakte hai. editor ko save kar sakte hai isse aapki comit delete ho jayegi.but yaha single koi ek commit bachi hai to vo delete nahi hoti.
+
+
 
 
