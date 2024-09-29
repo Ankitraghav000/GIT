@@ -269,7 +269,7 @@ Agar tumhe koi commit delete karna hai, toh tum rebase -i ka use karke us commit
 ```
 git rebase -i 
 ```
-jab aap emac editor open hoga tab aapko commit pr pointer ko lejana hai and then rebase option pe click krke aap kill option select kar sakte hai. editor ko save kar sakte hai isse aapki comit delete ho jayegi.but yaha single koi ek commit bachi hai to vo delete nahi hoti.
+jab aapka emac editor open hoga tab aapko commit pr pointer ko lejana hai and then rebase option pe click krke aap kill option select kar sakte hai. editor ko save kar sakte hai isse aapki comit delete ho jayegi.but yaha single koi ek commit bachi hai to vo delete nahi hoti.
 
 
 
