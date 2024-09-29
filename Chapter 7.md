@@ -270,7 +270,54 @@ Agar tumhe koi commit delete karna hai, toh tum rebase -i ka use karke us commit
 git rebase -i 
 ```
 jab aapka emac editor open hoga tab aapko commit pr pointer ko lejana hai and then rebase option pe click krke aap kill option select kar sakte hai. editor ko save kar sakte hai isse aapki comit delete ho jayegi.but yaha single koi ek commit bachi hai to vo delete nahi hoti.
+# Changing Email Address Globally in Commits
+Agar aapko apne purane commits ke email address ko change karna hai, to git filter-branch ka use kar sakte ho. Maan lo ki aapka email schacon@localhost hai aur aap usse change karna chahte ho. Yeh command aapke purane email ko naye email ke sath replace karegi:
+```
+git filter-branch --commit-filter '
+    if [ "$GIT_AUTHOR_EMAIL" = "schacon@localhost" ]; 
+    then 
+        GIT_AUTHOR_NAME="Scott Chacon";
+        GIT_AUTHOR_EMAIL="schacon@example.com";
+        git commit-tree "$@";
+    else
+        git commit-tree "$@";
+    fi' HEAD
+```
+# Subdirectory Ko Root Banana
 
+Maan lo aapne kisi dusre source control system se import kiya hai, aur aapke paas kuch bekaar subdirectories hain (jaise trunk, tags, etc.). Agar aap trunk subdirectory ko project ka naya root banana chahte ho, to filter-branch use kar sakte ho:
 
+```
+git filter-branch --subdirectory-filter trunk HEAD
+```
+# Reset Simplified
+Git mein reset aur checkout commands pehle thodi confusing lagti hain, lekin hum ise easy words me samajh sakte hain.
+- HEAD: Yeh aapka last commit snapshot hai, jo agle commit ka parent hoga.
+- Index (Staging Area): Yeh aapke next commit ka proposed snapshot hai. Jo files stage hui hain, unhe commit karne se pehle yahan dekha ja sakta hai.
+- Working Directory: Yeh sandbox hai jahan aap files ko real-time edit karte ho. Commit karne se pehle aap apne changes ko yahan check kar sakte ho.
+## Reset to a Specific Commit
+Aap apne branch ko ek specific commit par reset kar sakte hain, jo aapko kuch commits ko discard karne ka option deta hai:
 
+   - Soft Reset: Isme aapke changes staging area mein safe rehte hain.
+    ```
+    git reset --soft <commit>
+    ```
+    Yeh tab useful hota hai jab aap apne pichle kuch commits ko change karna chahte hain bina apna kaam khoe.
 
+   - Mixed Reset (default): Isme aapke changes working directory mein rehte hain, par unhe unstaged kar diya jata hai.
+     ```
+     git reset <commit>
+     ```
+     Yeh default behavior hai aur isse aap commit ko undo kar sakte hain, lekin changes ko safe rakhe rehta hai.
+
+     - Hard Reset: Isme working directory aur staging area ke saare changes ko discard kar diya jata hai.
+     ```
+     git reset --hard <commit>
+     ```
+     Yeh ek destructive command hai jo specified commit ke baad ke saare changes ko delete kar deta hai.
+     # Changes Ko Completely Discard Karna
+     Agar aapke paas uncommitted changes hain aur aap unhe poori tarah se discard karna chahte hain, to aap yeh command use kar sakte hain:
+     ```
+     git reset --hard HEAD
+     ```
+     Yeh aapki working directory aur staging area ko last commit par reset kar dega, aur effectively sabhi changes ko discard kar dega.
