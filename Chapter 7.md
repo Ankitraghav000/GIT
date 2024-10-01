@@ -321,3 +321,118 @@ Aap apne branch ko ek specific commit par reset kar sakte hain, jo aapko kuch co
      git reset --hard HEAD
      ```
      Yeh aapki working directory aur staging area ko last commit par reset kar dega, aur effectively sabhi changes ko discard kar dega.
+# Advanced Merging
+Git mein merging kaafi aasaan hoti hai. Kyunki Git mein aap multiple times doosri branch ko merge kar sakte ho, iska matlab aap long-lived branch rakh sakte ho, aur beech mein update karte raho, chhote chhote conflicts solve karte raho, instead of ek bade conflict ka end mein samna karne se.
+## Merge Conflicts
+Basic merge conflicts ko resolve karne ke baad, complex conflicts ke liye Git kuch tools provide karta hai jo aapko samajhne mein help karte hain ki kya ho raha hai aur kaise deal karna hai.
+
+  -  Kaam Clean Karo: Pehle, agar possible ho to ensure karo ki aapka working directory clean ho before merge. Agar aapko lagta hai ki conflicts ho sakte hain, toh apne kaam ko temporary branch mein commit ya stash karo, taki kuch galat ho to aap easily wapas aa sako.
+
+   -  Merge Abort Karna : Agar aap conflicts nahi expect kar rahe the aur abhi resolve nahi karna chahte, to git merge --abort se merge ko back out kar sakte ho. Ye aapko merge ke pehle waale state mein wapas le aayega.
+     
+ ```
+git merge --abort
+```
+
+- Ignoring Whitespace : Agar conflicts sirf whitespace related hain, to aap merge ko abort kar ke, phir se merge kar sakte ho using -Xignore-all-space ya -Xignore-space-change option ke sath. Ye options whitespace ko ignore karte hain jab files compare ki jaati hain.
+  
+```
+$ git merge -Xignore-space-change <branch name>
+```
+# Our or Theirs Preference
+Yeh concept samjhane ke liye main use karunga simple example jisme hum Git merging ke baare mein discuss kar rahe hain.
+
+By default, jab Git kisi conflict ko detect karta hai jab aap do branches ko merge karte ho, to yeh aapko conflict markers (jaise <<<<<<, =======, >>>>>>) code mein daal deta hai aur aapko manually resolve karne ke liye kehata hai. Lekin agar aap chahte ho ki Git ek particular side ko choose kare aur doosre side ko ignore kare bina aapse puchhe, to aap -Xours ya -Xtheirs option use kar sakte ho merge command ke sath.
+Difference between -Xours and -Xtheirs
+
+- Xours: Jab conflict aata hai, current branch (jo branch pe aap ho) ko choose karta hai aur doosre branch ke changes ko ignore karta hai.
+- Xtheirs: Isme aap jo doosri branch merge kar rahe ho (jaise mundo), uske changes ko accept karega aur current branch ke changes ko ignore karega.
+
+Example ke taur par, maan lo aap master branch pe ho aur aap mundo branch ko merge kar rahe ho, lekin aap chahte ho ki agar koi conflict aata hai to master branch ke changes automatically retain ho jayein. Us case mein, aap yeh command use kar sakte ho:
+```
+$ git merge -Xours mundo
+```
+Iska fayda yeh hoga ki bina conflict markers ke Git master ke changes rakh lega, lekin jo non-conflicting changes hain mundo branch ke, unhe merge kar lega.
+
+Lekin agar aap doosre side ke changes rakhna chahte ho, to aap -Xtheirs use karoge:
+```
+$ git merge -Xtheirs mundo
+```
+Yeh ensure karega ki mundo branch ke changes rakhe jayein aur master branch ke conflicted changes ignore ho jayein.
+### “Ours” Merge Strategy
+
+-Xours aur -Xtheirs se alag, ek aur option hota hai -s ours. Yeh ek fake merge strategy hoti hai jo sirf aapke current branch ke changes ko rakhti hai bina doosre branch ke changes ko dekh kar. Yeh command kuch aisa hota hai:
+```
+$ git merge -s ours mundo
+```
+# Rerere
+Git ka rerere feature ek kaafi useful aur thoda hidden functionality hai. Rerere ka full form hai "reuse recorded resolution". Iska kaam yeh hota hai ki jab aap ek merge conflict ko manually resolve karte ho, to Git uss resolution ko yaad rakhta hai, taaki agar future mein wahi conflict firse aata hai, to Git automatically usko resolve kar sake bina aapse dobara manual intervention ke.
+# Steps to Use rerere in Git
+## Enable rerere
+
+Pehle rerere feature ko enable karna hoga. Aap global level pe ya specific repository ke liye enable kar sakte ho.
+
+- Globally enable:
+  ```
+  git config --global rerere.enabled true
+  ```
+ ### Per repository enable:
+ Yeh command globally ya local repository ke liye rerere feature ko activate kar dega.
+ ```
+git config rerere.enabled true
+ ```
+### Encounter a Conflict
+
+Aap jab kisi branch ko merge kar rahe ho ya rebase kar rahe ho, aur ek conflict aata hai, Git conflict ko detect karega.
+```
+git merge feature-branch
+```
+### Resolve the Conflict Manually
+
+Jaise aap normal merge conflicts ko resolve karte ho, ussi tarah aap manually conflict resolve karenge.
+Edit the conflicted file
+```
+vim hello.rb
+```
+Resolve karne ke baad, file ko stage kar dein aur commit kar dein.
+```
+git add hello.rb
+git commit
+```
+### rerere Records the Resolution
+Jab aapne conflict resolve kiya aur commit kiya, rerere uss resolution ko automatically yaad rakh lega. Aap isko manually track kar sakte ho:
+```
+git rerere status
+```
+Agar future mein same file ya branch mein dubara wahi conflict aata hai, to rerere automatically usko resolve kar dega bina aapse manually resolve karne ko kahe.
+### Undo a Conflict Resolution
+Agar aap ek conflict ko resolve kar chuke ho, lekin aap wapas jaake resolve ko undo karna chahte ho, aap use kar sakte ho:
+```
+git rerere forget
+```
+Yeh command conflict resolution ko forget kar dega taaki aap manually dobara resolve kar sakein.
+
+# Debugging with Git
+
+Git sirf version control ke liye hi nahi, balki aapke source code projects ko debug karne mein bhi madad karta hai. Git aise kai commands provide karta hai jo generic hain, lekin aksar bugs ya issues trace karne mein bahut useful sabit hote hain.
+Example: git blame ka use karke commit aur committer identify karna
+```
+$ git blame -L 69,82 Makefile
+```
+- Special Notation:
+
+    ^1da177e4c3f4: Yeh indicate karta hai ki yeh lines repository ke initial commit mein introduce hui thi aur uske baad se kabhi change nahi hui hain. Git mein ^ prefix ka matlab alag-alag context mein thoda confusing ho sakta hai, lekin yahan yeh sirf reference hai.
+#  Binary Search in Git
+Agar tumhe nahi pata ki bug kaha hai, aur kayi commits ho chuke hain since the last known working state, toh tum git bisect ka use kar sakte ho. git bisect ek binary search karta hai tumhare commit history mein taaki jaldi se pata chale ki issue kis commit se introduce hua.
+- Start Bisect:
+  Sabse pehle, tum git bisect start chalate ho, jo bisecting process ko shuru karta hai.
+  Fir, tum Git ko current commit ke baare mein bataoge ki yeh "bura" (bad) hai, yani is commit mein bug hai.
+  ```
+  git bisect start
+git bisect bad
+  ```
+- Last Known Good Commit Batana:
+  Uske baad, tumhe ek commit specify karna hoga jisme bug nahi tha, yani wo achha (good) commit hai. Tum git log ya git reflog ka use karke yeh sha-1 commit hash pata kar sakte ho.
+```
+git bisect good <achha_commit>
+```
