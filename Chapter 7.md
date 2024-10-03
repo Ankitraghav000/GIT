@@ -427,12 +427,144 @@ Agar tumhe nahi pata ki bug kaha hai, aur kayi commits ho chuke hain since the l
 - Start Bisect:
   Sabse pehle, tum git bisect start chalate ho, jo bisecting process ko shuru karta hai.
   Fir, tum Git ko current commit ke baare mein bataoge ki yeh "bura" (bad) hai, yani is commit mein bug hai.
-  ```
-  git bisect start
+```
+git bisect start
 git bisect bad
-  ```
+```
 - Last Known Good Commit Batana:
-  Uske baad, tumhe ek commit specify karna hoga jisme bug nahi tha, yani wo achha (good) commit hai. Tum git log ya git reflog ka use karke yeh sha-1 commit hash pata kar sakte ho.
+Uske baad, tumhe ek commit specify karna hoga jisme bug nahi tha, yani wo achha (good) commit hai. Tum git log ya git reflog ka use karke yeh sha-1 commit hash pata kar sakte ho.
 ```
 git bisect good <achha_commit>
 ```
+git bisect run ke sath hum ek script (test-error.sh) ko run karvate hain jo har commit ko check karta hai aur decide karta hai ki bug present hai ya nahi.
+```
+$ git bisect run <script-name>
+```
+# Submodules
+Jab aap kisi project mein kaam kar rahe hote ho aur usmein doosre project ki zaroorat hoti hai, toh aapko submodules ka use karna padta hai. Ye tab helpful hota hai jab aap ek library ya code ka part apne project mein include karte ho, jo kisi aur ne develop kiya ho ya aap alag se bana rahe ho aur multiple parent projects mein use karna ho.
+
+- Example se samjhte hain:
+Suppose aap ek website develop kar rahe ho jisme aap Atom feeds generate karna chahte ho. Iske liye aap apna khud ka Atom generator code likhne ke bajaye koi existing library use karna prefer karte ho. Aapko ya toh library ko apne project mein copy karna padta ya phir kisi package manager (jaise CPAN ya Ruby gem) se install karna padta. Copy karne se ye dikkat hoti hai ki jab library update hoti hai toh merge karna mushkil hota hai, aur include karne se ye problem aati hai ki har client ko library available karani padti hai.
+
+Is problem ko Git submodules se solve karta hai. Submodules allow karte hain ki ek Git repository ko doosre Git repository ke andar subdirectory ki tarah rakha ja sake. Aap doosre repository ko apne project mein clone kar sakte ho aur uske commits ko alag se track kar sakte ho.
+## Submodules add karna:
+```
+$ git submodule add https://github.com/chaconinc/DbConnector
+```
+Commit karne par kuch aisa dikhai dega:
+```
+$ git commit -am 'Add DbConnector module'
+[master fb9093c] Add DbConnector module
+ 2 files changed, 4 insertions(+)
+ create mode 100644 .gitmodules
+ create mode 160000 DbConnector
+```
+Notice karo 160000 mode jo ek special mode hai Git mein, ye batata hai ki ek commit ko directory ke form mein record kiya gaya hai, file ya subdirectory ke form mein nahi.
+- Submodule wala project clone karna:
+Jab aap ek project clone karte ho jisme submodule ho, toh by default aapko sirf wo directories milti hain jisme submodules hain, lekin un directories ke andar koi files nahi hoti.
+```
+$ git clone https://github.com/chaconinc/MainProject
+$ git submodule update --init
+```
+Ye last command submodule ke andar ki files bhi pull kar legi aur sab kuch sync ho jayega.
+
+Aap ek aur simpler tareeke se submodule ko clone kar sakte ho. Agar aap --recurse-submodules option ko git clone command ke sath pass karte ho, toh ye automatically har submodule ko initialize aur update kar dega, chahe wo nested submodules ho ya simple.
+```
+$ git clone --recurse-submodules https://github.com/chaconinc/MainProject
+```
+Agar aapko check karna hai ki koi naye updates hai kya submodule me, toh aap submodule ki directory me jaake git fetch aur git merge run kar sakte ho:
+```
+$ git fetch
+From https://github.com/chaconinc/DbConnector  
+c3f01dc..d0354fc  master -> origin/master
+$ git merge origin/master
+Updating c3f01dc..d0354fc
+Fast-forward
+ scripts/connect.sh | 1 +
+ src/db.c           | 1 +
+ 2 files changed, 2 insertions(+)
+```
+Ye commands submodule ke latest changes ko aapki local copy me merge kar deti hain.
+Easy way to update submodules:
+```
+$ git submodule update --remote
+```
+Agar aap manually subdirectory me fetch aur merge nahi karna chahte, toh aap git submodule update --remote command run kar sakte ho. Ye command automatically submodules me jaake fetch aur update kar degi.
+
+
+Agar aap submodule ke branch ko track karna chahte ho, toh git config -f .gitmodules submodule.<name>.branch <branch> ka use karte ho. Example me, hum DbConnector submodule ko stable branch par track kar rahe hain.
+```
+$ git config -f .gitmodules submodule.DbConnector.branch stable
+$ git submodule update --remote
+```
+$ git log -p --submodule, submodule me kaunse naye commits aa rahe hain. Commit karne ke baad aap git log -p --submodule run karke bhi yeh information dekh sakte ho.
+```
+$ git log -p --submodule
+```
+## Submodule Tips
+
+Submodules ko handle karna easy banane ke liye kuch tips hai.
+
+Submodule Foreach: foreach command submodule mein koi bhi arbitrary command run karne ke liye helpful hoti hai. Agar same project mein multiple submodules ho, toh ye useful hota hai.
+```
+$ git submodule foreach 'git stash'
+```
+- Useful Aliases: Aap kuch useful aliases setup kar sakte ho jo long commands ko shortcut mein convert karein. Example:
+```
+$ git config alias.sdiff '!'"git diff && git submodule foreach 'git diff'"
+$ git config alias.spush 'push --recurse-submodules=on-demand'
+$ git config alias.supdate 'submodule update --remote --merge'
+```
+
+Here's the translation of the provided content into Hinglish, along with the main points that can be highlighted for a document:
+
+# Bundling
+Bundling ka Parichay: Humne Git data ko network par transfer karne ke common tarike (HTTP, SSH, etc.) ke baare mein baat ki hai, lekin ek aur tarika hai jo aam taur par use nahi hota lekin kaafi useful ho sakta hai. Git apne data ko ek single file mein "bundle" karne ki kshamata rakhta hai. Ye kayi scenarios mein kaam aa sakta hai, jaise:
+
+- Jab aapka network down hai aur aap apne co-workers ko changes bhejna chahte hain.
+- Jab aap kahin offsite hain aur local network tak access nahi hai.
+- Jab aapka wireless/ethernet card kharab ho gaya ho.
+- Jab aapke paas shared server tak access nahi hai aur aap kisi ko updates email karna chahte hain bina 40 commits ko transfer kiye.
+- Git Bundle Command: Yahaan git bundle command madadgar ho sakti hai. Ye command saara data jo aam taur par git push command ke sath transfer hota hai, ek binary file mein package kar deti hai, - jise aap kisi ko email kar sakte hain ya flash drive par rakh sakte hain, phir ise dusre repository mein unbundle kar sakte hain.
+
+aap repository ko kisi ko bhejna chahte toh aap isse git bundle create se bundle kar sakte hain:
+```
+$ git bundle create repo.bundle HEAD master
+```
+Bundle ko Email ya USB Se Transfer Karna: Aap is repo.bundle file ko kisi ko email kar sakte hain, ya ise USB drive par rakh kar le ja sakte hain. Dusri taraf, agar aapko ye repo.bundle file mile aur aap project par kaam karna chahte hain, toh aap is binary file se directory mein clone kar sakte hain:
+```
+$ git clone repo.bundle repo
+```
+Bundle Verification: Jab wo bundle ko receive karti hain, toh wo ise inspect kar sakti hain ye dekhne ke liye ki isme kya hai. Pehla command bundle verify hota hai jo ye confirm karega ki file sach mein ek valid Git bundle hai aur aapke paas usse sahi tarike se recreate karne ke liye zaroori ancestors hain:
+```
+$ git bundle verify ../commits.bundle
+```
+# Replace
+Replace ka Parichay: Git mein objects ko replace karne ka ek tarika hai jisse aap kisi object ko dusre object se replace kar sakte hain bina history ko modify kiye. Ye kaafi useful hai jab aap ek commit ko dusre commit se replace karna chahte hain.
+
+Example Scenario: Agar aapke paas ek bada code history hai aur aap isse do parts mein split karna chahte hain, jaise ek short history naye developers ke liye aur ek long history data mining ke liye, toh aap replace command ka istemal kar sakte hain.
+
+Steps:
+```
+$ git log --oneline
+ef989d8 Fifth commit
+c6e1e95 Fourth commit
+9c68fdc Third commit
+945704c Second commit
+c1822cf First commit
+```
+Historical History Banana:
+```
+$ git branch history c6e1e95
+$ git remote add project-history https://github.com/schacon/project-history
+$ git push project-history history:master
+```
+Recent History ko Chhota Karna:
+```
+$ git log --oneline --decorate
+```
+Base Commit Banana:
+```
+$ echo 'Get history from blah blah blah' | git commit-tree 9c68fdc^{tree}
+```
+Plumbing Commands: commit-tree command ko plumbing commands kaha jaata hai, jo low-level tasks ke liye istemal hoti hain.
