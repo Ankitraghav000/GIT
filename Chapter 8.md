@@ -194,3 +194,44 @@ File ko executable banana hota hai, jiske liye aap yeh command use kar sakte ho:
 ```
 chmod +x .git/hooks/<hook_name>
 ```
+# An Example Git-Enforced Policy
+Git mein ek aisi policy establish karna jo commit message format ko check kare aur certain users ko specific directories ko modify karne se roke, bohot helpful hota hai. Yeh policy enforce karne ke liye hum client-side aur server-side hooks ka istemal karte hain.
+
+Example Steps:
+- Custom Commit Message Format Check: Hum ek pre-commit hook banate hain jo ensure karta hai ki commit message ek specific format follow kare, jaise JIRA-<number>: <message>.
+
+pre-commit Hook Example (Ruby):
+```
+#!/usr/bin/env ruby
+
+commit_message_file = ARGV[0]
+commit_message = File.read(commit_message_file)
+
+unless commit_message.match?(/^JIRA-\d+: .+/)
+  puts "Error: Commit message must start with 'JIRA-<number>: <message>'"
+  exit 1
+end
+```
+Agar commit message sahi format mein nahi hai, toh commit reject ho jayega.
+
+- User Permissions Check: Server-side, hum ek pre-receive hook banate hain jo check karta hai ki kya user ko specific subdirectory mein changes karne ki permission hai.
+
+pre-receive Hook Example (Ruby):
+```
+#!/usr/bin/env ruby
+
+STDIN.each_line do |line|
+  old_rev, new_rev, ref = line.split
+
+  if ref.start_with?("refs/heads/sensitive-directory")
+    user = `git config user.name`.strip
+    allowed_users = ["user1", "user2"]
+
+    unless allowed_users.include?(user)
+      puts "Error: You do not have permission to push to #{ref}"
+      exit 1
+    end
+  end
+end
+```
+Agar user sensitive-directory mein push karne ki koshish kare bina permission ke, toh push reject ho jayega.
