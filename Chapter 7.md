@@ -568,3 +568,24 @@ Base Commit Banana:
 $ echo 'Get history from blah blah blah' | git commit-tree 9c68fdc^{tree}
 ```
 Plumbing Commands: commit-tree command ko plumbing commands kaha jaata hai, jo low-level tasks ke liye istemal hoti hain.
+
+# Credential Storage
+Agar aap SSH transport ka istemal karte hain, toh aap bina passphrase ke key bana sakte hain, lekin HTTP protocols ke liye username aur password ki zarurat hoti hai. Git mein credentials ko manage karne ke liye kuch options hain:
+
+- Default: Credentials ko cache nahi kiya jata, har baar username aur password maangta hai.
+Cache Mode: Credentials ko memory mein rakhta hai, jo 15 minutes baad khatam ho jate hain.
+```
+$ git config --global credential.helper cache
+```
+Set Cache Timeout (e.g., 1 hour)
+```
+git config --global credential.helper 'cache --timeout=3600'
+```
+- Store Mode:
+Credentials ko ek plain-text file mein store karta hai, jo kabhi expire nahi hote.
+```
+git config --global credential.helper store
+```
+```
+git config --global credential.helper 'store --file ~/.my-credentials'
+```
