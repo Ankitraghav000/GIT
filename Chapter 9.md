@@ -210,3 +210,32 @@ Git yeh kaise karta hai? Jab Git objects ko pack karta hai, toh wo same naam aur
 $ git verify-pack -v .git/objects/pack/pack-978e03944f5c581011e6998cd0e9e30000905586.idx
 ```
 Yaha, 033b4 blob, jo aapke pehle repo.rb file ka version tha, ab b042a blob ko reference kar raha hai, jo file ka doosra version tha. Teesra column object ka pack mein size hai, toh aap dekh sakte hain ki b042a 22K file space le raha hai, lekin 033b4 sirf 9 bytes ka space le raha hai. Jo interesting baat hai
+
+# The Refspec
+Refspec Git ka ek pattern hota hai jo batata hai ki remote branches ko local branches ke sath kaise map karna hai. Ye fetch aur push commands ke sath kaam karta hai.
+
+Example: Remote Add
+Jab tum remote add karte ho, jaise:
+```
+$ git remote add origin https://github.com/user/repo.git
+```
+Toh .git/config file mein kuch aisa add ho jata hai:
+```
+[remote "origin"]
+    url = https://github.com/user/repo.git
+    fetch = +refs/heads/*:refs/remotes/origin/*
+fetch = +refs/heads/*:refs/remotes/origin/*
+```
+Iska matlab hai ki remote ke saare branches ko refs/remotes/origin/ mein fetch karenge.
+One-Time Fetch Example:
+Agar tum remote master branch ko local mymaster branch ke sath fetch karna chahte ho:
+```
+$ git fetch origin master:refs/remotes/origin/mymaster
+```
+Refspec powerful tool hai Git mein jo fetching aur pushing processes ko customize karta hai. Isse tum specific branches ya namespaces ka achhe tareeke se management kar sakte ho.
+
+Push Refspec Example:
+Agar tum local master branch ko remote qa/master branch pe push karna chahte ho:
+```
+$ git push origin master:refs/heads/qa/master
+```
