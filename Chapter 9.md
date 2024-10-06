@@ -239,3 +239,39 @@ Agar tum local master branch ko remote qa/master branch pe push karna chahte ho:
 ```
 $ git push origin master:refs/heads/qa/master
 ```
+# Transfer Protocols
+Git mein data do repositories ke beech do tareekon se transfer hota hai: "dumb" protocol aur "smart" protocol. Is section mein hum in dono main protocols ko samjhenge aur kaise yeh operate karte hain, 
+## Dumb Protocol
+Dumb protocol ek purani aur simple tariqa hai Git data ko transfer karne ka. Is protocol ko "dumb" isliye kaha jata hai kyunki server par koi bhi Git-specific code nahi chalta during data transfer. Sirf HTTP GET requests ke through client server se data leta hai.
+
+Key Points:
+- Ismein server par koi advanced Git feature nahi chalta.
+- Read-only repositories ke liye use hota hai (matlab sirf data download kiya ja sakta hai, upload nahi).
+- Client ko pata hota hai ki server par Git repository ka layout kaise arrange kiya gaya hai.
+- Aaj kal yeh protocol rarely use hota hai, kyunki yeh private repositories ke liye secure nahi hai.
+Example Command:
+```
+git clone http://server/simplegit.git
+```
+Yeh command repository ka data fetch karegi. Sabse pehle yeh info/refs file ko download karegi jisme remote references ka list hota hai. Phir, objects ko download karke repository ka working copy banaya jata hai.
+
+## Smart Protocol
+Smart protocol zyada advanced aur common method hai Git mein data transfer karne ka. Yeh protocol server aur client ke beech ek intelligent process set karta hai jo decide karta hai ki client ko kaunsa data chahiye aur server ke paas kya available hai.
+
+Key Points:
+- Ismein server pe ek process hota hai jo Git-specific operations handle karta hai.
+- Data upload aur download dono kar sakte hain.
+- Server ek custom packfile banata hai jo client ke liye zaroori objects ko include karta hai.
+- Zyada secure hota hai aur push/pull operations ke liye commonly use kiya jata hai.
+Example Commands:
+Upload data (push) via SSH:
+```
+git push origin master
+```
+Is command mein send-pack process client par chalti hai jo server ke receive-pack process ke saath connect karti hai.
+
+Download data (fetch) via SSH:
+```
+git fetch origin
+```
+Ismein client ka fetch-pack process server ke upload-pack process se connect karke data download karta hai.
