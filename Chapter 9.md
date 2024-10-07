@@ -275,3 +275,60 @@ Download data (fetch) via SSH:
 git fetch origin
 ```
 Ismein client ka fetch-pack process server ke upload-pack process se connect karke data download karta hai.
+# Maintenance aur Data Recovery
+Kabhi kabhi humein Git repository mein thoda sa clean-up karna padta hai, jaise ki usko compact banana ya phir koi kaam jo khoya ho, usey recover karna. Is section mein hum aise kuch scenarios dekhenge.
+
+## Maintenance (Maintenance ka kaam)
+Git kabhi kabhi automatically ek command chalata hai, jo hai "auto gc". Aksar yeh command kuch nahi karta, lekin agar zyada loose objects (jo packfile mein nahi hain) ho ya zyada packfiles ho jaayein, toh Git ek fully developed git gc command chalayega. "gc" ka matlab hai garbage collect. Yeh command loose objects ko ek packfile mein collect karta hai aur purani packfiles ko consolidate karke ek badi packfile banata hai. Isse purani aur irrelevent objects jo kisi commit se connected nahi hain aur kaafi purane hain, unhe delete kar deta hai.
+
+Aap manually bhi git gc --auto chala sakte ho:
+```
+$ git gc --auto
+```
+Agar aapki repository mein 7,000 se zyada loose objects ya 50 se zyada packfiles ho jaayein, tab hi gc command chalegi. Aap limits ko gc.auto aur gc.autopacklimit se change kar sakte ho.
+
+Iske alawa, gc aapki references ko ek single file mein bhi pack karega. Example ke liye, agar aapki repository mein yeh branches aur tags hain:
+```
+$ find .git/refs -type f
+.git/refs/heads/experiment
+.git/refs/heads/master
+.git/refs/tags/v1.0
+.git/refs/tags/v1.1
+```
+Agar aap git gc chalate ho, toh yeh files .git/packed-refs file mein move ho jaayengi:
+```
+$ cat .git/packed-refs
+# pack-refs with: peeled fully-peeled
+cac0cab538b970a37ea1e769cbbde608743bc96d refs/heads/experiment
+ab1afef80fac8e34258ff41fc1b867c702daa24b refs/heads/master
+cac0cab538b970a37ea1e769cbbde608743bc96d refs/tags/v1.0
+9585191f37f7b0fb9444f35a9bf50de191beadc2 refs/tags/v1.1 ^1a410efbd13591db07496601ebc7a059dd55cfe9
+```
+Agar reference update hota hai, toh Git is file ko edit nahi karta, balki ek naya file refs/heads mein likhta hai. Toh agar koi reference nahi milta, toh yeh packed-refs file check hoti hai.
+
+Data Recovery (Lost commits ko wapas laana)
+Kabhi kabhi aap kisi branch ko galti se delete kar doge ya hard-reset kar doge aur kuch commits kho jaayenge. Aise case mein, commits ko wapas kaise laayenge?
+
+Ek example dekhte hain, jisme hum master branch ko purane commit par reset karenge aur phir lost commits ko recover karenge.
+```
+$ git log --pretty=oneline
+ab1afef80fac8e34258ff41fc1b867c702daa24b Modify repo.rb a bit
+484a59275031909e19aadb7c92262719cfcdf19a Create repo.rb
+1a410efbd13591db07496601ebc7a059dd55cfe9 Third commit
+```
+Aap apni master branch ko purane commit par reset karte hain:
+```
+$ git reset --hard 1a410efbd13591db07496601ebc7a059dd55cfe9
+```
+HEAD is now at 1a410ef Third commit
+Aapke do commits ab reachable nahi hain. Iska solution hai git reflog use karna. Reflog silently aapke head changes ko track karta hai:
+```
+$ git reflog
+1a410ef HEAD@{0}: reset: moving to 1a410ef
+ab1afef HEAD@{1}: commit: Modify repo.rb a bit
+```
+Isme se lost commit ka SHA-1 mil gaya, toh us par ek nayi branch create karte hain:
+```
+$ git branch recover-branch ab1afef
+```
+Is branch ke through aapke commits wapas mil jaayenge.
