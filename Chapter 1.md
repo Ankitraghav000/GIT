@@ -12,6 +12,8 @@ log files ko alag directory mein copy kar ke version control karte hain, lekin y
 
 ## Centralized Version Control Systems (CVCS)
 Jab logo ko different systems par kaam karte hue collaborate karna hota hai, toh Centralized Version Control Systems ka istemal kiya jata hai. CVCS ek central server par sabhi versioned files ko rakhta hai aur users files ko wahaan se check out karte hain. Lekin iska ek major drawback yeh hai ki agar server fail ho jaye, toh pura project history kho sakte hain.
+![vcs](https://github.com/user-attachments/assets/5e0e8dda-c5d7-4a66-a9a1-e46269f5120e)
+
 
 ## Distributed Version Control Systems (DVCS)
 Distributed Version Control Systems (jaise Git, Mercurial) mein har client ke paas repository ka full history hota hai. Agar koi server fail ho jaye, toh client repositories se data recover kiya ja sakta hai. Is system mein aap simultaneously alag-alag groups ke saath kaam kar sakte hain aur hierarchical workflows bhi set kar sakte hain jo centralized systems mein possible nahi hote.
