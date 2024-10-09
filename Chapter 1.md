@@ -7,8 +7,8 @@ Version Control ke baare mein Version control kya hota hai aur aapko iski zaroor
 
 Agar aap ek graphic ya web designer hain aur aapko kisi image ya layout ke sabhi versions ko save karna hai, toh Version Control System (VCS) ka istemal ek wise choice hai. Yeh aapko files ko pichle state mein revert karne, puri project ko wapas pichle state mein lane, changes ko samay ke saath compare karne, aur kisne kya modify kiya yeh dekhne mein madad karta hai. VCS use karne ka ek aur fayda yeh hai ki agar kuch galat ho jaye ya files kho jayein, toh aap asani se recover kar sakte hain.
 
-## Local Version Control Systems Bohot 
-log files ko alag directory mein copy kar ke version control karte hain, lekin yeh method galtiyon se bhara hota hai. Is issue ko solve karne ke liye, local VCS develop kiye gaye jo ek simple database mein files ke changes ko record karte hain.
+## Local Version Control Systems
+Bohot log files ko alag directory mein copy kar ke version control karte hain, lekin yeh method galtiyon se bhara hota hai. Is issue ko solve karne ke liye, local VCS develop kiye gaye jo ek simple database mein files ke changes ko record karte hain.
 
 ## Centralized Version Control Systems (CVCS)
 Jab logo ko different systems par kaam karte hue collaborate karna hota hai, toh Centralized Version Control Systems ka istemal kiya jata hai. CVCS ek central server par sabhi versioned files ko rakhta hai aur users files ko wahaan se check out karte hain. Lekin iska ek major drawback yeh hai ki agar server fail ho jaye, toh pura project history kho sakte hain.
