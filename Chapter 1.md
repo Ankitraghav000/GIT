@@ -19,8 +19,21 @@ Jab logo ko different systems par kaam karte hue collaborate karna hota hai, toh
 Distributed Version Control Systems (jaise Git, Mercurial) mein har client ke paas repository ka full history hota hai. Agar koi server fail ho jaye, toh client repositories se data recover kiya ja sakta hai. Is system mein aap simultaneously alag-alag groups ke saath kaam kar sakte hain aur hierarchical workflows bhi set kar sakte hain jo centralized systems mein possible nahi hote.
 
 ## Git ki Short History
-Git ka shuruat ek controversy ke saath hui. Linux kernel ek open source software project hai. 1991 se 2002 tak, changes patches aur archived files ke roop mein distribute kiye jate the. 2002 mein Linux kernel project ne BitKeeper naam ka proprietary DVCS use karna shuru kiya. 2005 mein BitKeeper ka free status khatam ho gaya aur Linus Torvalds ne apna tool banaya jisse Git ka janm hua. Git ka goal tha speed, simple design, non-linear development, aur distributed system ko support karna.
+Git ka shuruat ek controversy ke saath hui. Linux kernel ek open source software project hai. 1991 se 2002 tak, changes patches aur archived files ke roop mein distribute kiye jate the. 2002 mein Linux kernel project ne BitKeeper naam ka proprietary DVCS use karna shuru kiya. 2005 mein BitKeeper ka free status khatam ho gaya aur Linus Torvalds ne apna tool banaya jisse Git ka janm hua. Git ka goal tha speed, simple design, non-linear development, aur distributed system ko support karna.Git Mein Integrity Hoti Hai
+Git mein har file checksummed hoti hai aur usse uske unique SHA-1 hash ke through store kiya jaata hai. Is wajah se, bina Git ko pata chale, koi file badli nahi ja sakti. Hash se files ka tracking hota hai, jo integrity maintain karta hai.
 
 2005 ke baad se, Git evolve aur mature hua hai, lekin apne initial qualities ko retain kiya hai. Yeh bohot fast hai, large projects ke liye efficient hai, aur branching system bohot strong hai
 ## Git kya hai:
 Git ek Version Control System (VCS) hai jo files ka record rakhta hai aur unke changes ko track karta hai. Yeh doosre VCSs jaise CVS, Subversion, ya Perforce se alag hai kyunki Git information ko ek unique tarike se store karta hai. Isliye, agar aap Git seekhte waqt purane systems ke concepts ko hata kar samjhenge, toh aapko confusion kam hoga aur Git ko effectively use karna aasan hoga
+# Git Mein Integrity Hoti Hai
+Git mein har file checksummed hoti hai aur usse uske unique SHA-1 hash ke through store kiya jaata hai. Is wajah se, bina Git ko pata chale, koi file badli nahi ja sakti. Hash se files ka tracking hoti hai, jo integrity maintain karta hai.
+The Three States (Hinglish mein):
+
+Git mein aapke files teen main states mein ho sakti hain: modified, staged, aur committed:
+
+- Modified: Jab aapne file ko change kiya hai lekin abhi tak commit nahi kiya.
+- Staged: Aapne modified file ko next commit ke liye mark kiya hai.
+- Committed: Data aapke local database mein safely store ho gaya hai.
+## The Command Line
+
+Git ko use karne ke bahut tareeke hain. Ek hai original command-line tools ka istemal, aur doosra graphical user interfaces (GUIs) ka use karna. Is book mein hum command line pe Git ka use karenge. Command line pe aap saare Git commands run kar sakte ho, jabki GUIs mein sirf limited functionalities hoti hain. 
