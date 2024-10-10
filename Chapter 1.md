@@ -37,3 +37,99 @@ Git mein aapke files teen main states mein ho sakti hain: modified, staged, aur 
 ## The Command Line
 
 Git ko use karne ke bahut tareeke hain. Ek hai original command-line tools ka istemal, aur doosra graphical user interfaces (GUIs) ka use karna. Is book mein hum command line pe Git ka use karenge. Command line pe aap saare Git commands run kar sakte ho, jabki GUIs mein sirf limited functionalities hoti hain. 
+Ubuntu mein Git install karne ke liye, aapko terminal ka istemal karna hoga. Neeche diye gaye steps ko follow karein:
+## Installing Git
+Terminal kholein: Sabse pehle apna terminal open karein.
+
+Package list update karein: Latest package information ko update karne ke liye yeh command chalayein:
+```
+sudo apt update
+```
+Git install karein: Ab Git install karne ke liye yeh command type karein:
+```
+sudo apt install git-all
+```
+Installation confirm karein: Install hone ke baad yeh command chalakar check karein ki Git sahi se install ho gaya hai ya nahi:
+```
+git --version
+```
+Agar aapko Git ka version show ho jaye, to iska matlab Git successfully install ho gaya hai.
+
+Ab aap Git commands use karne ke liye ready hain!
+## First-Time Git Setup
+Ab jab tumhare system par Git install ho gaya hai, toh kuch cheezein customize karna zaroori hai apne Git environment ke liye. Yeh cheezein tumhe sirf ek baar har computer par karni hongi, aur yeh settings upgrades ke beech bhi rahengi. Tum inhe kabhi bhi change kar sakte ho dobara commands run karke.
+
+Git ke saath ek tool aata hai jiska naam hai git config, jo tumhe configuration variables set karne aur dekhne mein madad karta hai.
+```
+git config --list --show-origin
+```
+## Your Identity
+Jab tum Git install karte ho, pehli cheez jo tumhe karni chahiye, woh hai apna user name aur email address set karna. Yeh zaroori hai kyunki har Git commit yeh information use karta hai, aur yeh commit ke andar permanently save ho jaata hai.
+
+Command use karne ka tareeqa:
+```
+$ git config --global user.name "John Doe"
+$ git config --global user.email johndoe@example.com
+```
+## Your Editor
+Ab jab tumhara identity set ho gaya hai, tum apne default text editor ko bhi configure kar sakte ho, jo Git tab use karega jab tumhe ek message type karna padega. Agar tumne kuch configure nahi kiya, toh Git tumhare system ka default editor use karega.
+
+Agar tum koi doosra text editor use karna chahte ho, jaise Emacs, toh tum yeh command use kar sakte ho:
+```
+$ git config --global core.editor emacs
+```
+## Your Default Branch Name
+By default, Git ek naya repository banate waqt "master" branch banata hai jab tum git init command use karte ho. Lekin, Git version 2.28 se onwards, tum initial branch ka naam customize kar sakte ho.
+
+Agar tum chahte ho ki initial branch ka naam main ho, toh yeh command use kar sakte ho:
+```
+$ git config --global init.defaultBranch main
+```
+Isse tumhare naye repositories ka default branch name "main" ban jayega
+Yeh command tumhare Git ke liye Emacs ko default editor bana degi.
+
+## Checking Your Settings
+Agar tum apne Git configuration settings check karna chahte ho, toh tum git config --list command use kar sakte ho. Is command se tumhe Git ke saare settings dikhenge jo us waqt Git ko mile hain:
+```
+$ git config --list
+user.name=John Doe  
+user.email=johndoe@example.com  
+color.status=auto  
+color.branch=auto  
+color.interactive=auto  
+color.diff=auto  
+...
+```
+Kabhi kabhi tumhe same key multiple times dikh sakti hai, kyunki Git same key ko alag files se padh sakta hai (jaise [path]/etc/gitconfig aur ~/.gitconfig). Aise cases mein Git hamesha last value ko use karega jo usse milegi.
+
+Agar tumhe kisi specific key ka value dekhna hai, toh yeh command use kar sakte ho:
+```
+$ git config user.name
+John Doe
+```
+## Getting Help with Git in Hinglish
+Agar aapko Git use karte waqt madad ki zaroorat hai, to aap Git commands ke liye comprehensive manual page (manpage) help teen tarikon se le sakte hain:
+```
+$ git help <verb>
+```
+Is command se aap specific Git command ka help dekh sakte hain. Jaise, agar aapko git config ke baare mein jaana hai, to aap likhenge:
+```
+$ git help config
+$ git <verb> --help
+```
+Is tarike se bhi aap help le sakte hain. Ye bhi wahi information dega.
+```
+$ man git-<verb>
+```
+Ye command bhi help provide karega, lekin manpages format mein.
+## Quick Help
+Agar aapko sirf Git command ke options ya syntax ka quick refresher chahiye, to aap -h option use karke help output le sakte hain. Jaise:
+```
+$ git add -h
+```
+## The Three States
+Dhyaan se suno— yeh Git ka sabse important point hai agar tum apni learning process ko smoothly chalana chahte ho. Git mein tumhare files teen main states mein ho sakte hain: modified, staged, aur committed:
+
+- Modified: Matlab tumne file mein changes kiye hain, par ab tak usse apne database mein commit nahi kiya hai.
+- Staged: Matlab tumne ek modified file ko mark kar diya hai taki wo tumhare next commit snapshot mein jaaye.
+- Committed: Matlab file ka data safely tumhare local database mein store ho gaya hai.
