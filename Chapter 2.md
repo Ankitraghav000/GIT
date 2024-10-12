@@ -746,3 +746,32 @@ Agar tum remote repository se tags pull karna chahte ho, toh simply yeh command 
 ```
 $ git fetch --tags
 ```
+## Git Aliases
+
+Git me aliases ka use aap commands ko short form me run karne ke liye kar sakte ho, taki baar baar lambi commands na likhni pade. Aap git config ka use karke apni favorite commands ke aliases bana sakte ho. Yeh kaafi helpful hota hai jab aap frequent commands use karte ho.
+
+Basic Aliases Commands:
+Alias Set Karna:
+```
+$ git config --global alias.co checkout
+$ git config --global alias.br branch
+$ git config --global alias.ci commit
+$ git config --global alias.st status
+```
+Example: git checkout ko git co se run karna.
+Unstage Command:
+```
+$ git config --global alias.unstage 'reset HEAD --'
+```
+Example: git reset HEAD -- fileA ko ab git unstage fileA se run kar sakte ho.
+Last Commit Dekhna:
+```
+$ git config --global alias.last 'log -1 HEAD'
+```
+Example: git last likhne se aapka latest commit dikh jaayega.
+#### Advanced Aliases:
+Custom Commands Banana: Agar aap apne custom tools use karte ho jo Git ke saath kaam karte hain, to aap ! ke saath external commands bhi add kar sakte ho.
+```
+$ git config --global alias.visual '!gitk'
+```
+Example: git visual likhne par gitk GUI open ho jaayega.
