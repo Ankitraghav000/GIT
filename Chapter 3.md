@@ -255,3 +255,227 @@ Ab tumhare remote pe main branch available hogi, lekin master branch ab bhi waha
 ```
 $ git push origin --delete master
 ```
+## Remote Branches
+
+Remote references pointers hote hain  jo remote repositories mein branches aur tags ko dikhate hain. Aap git ls-remote <remote> ya git remote show <remote> se inka status dekh sakte ho. Remote-tracking branches vo local references hote hain jo remote branches ki state ko track karte hain. Jab aap network communication karte ho, Git inhe update karta hai.
+
+Remote-tracking branches ka format <remote>/<branch> hota hai, jaise origin/master, jo remote master branch ko track karta hai. Jab aap kisi repository ko clone karte ho, Git remote branch ko track karne ke liye aapke local mein origin/master jaise branches create karta hai.
+### Local aur Remote Work ka Alag Chalna
+Jaise hi aap apne remote ke saath apna kaam sync karna chahte ho, aapko git fetch <remote> command run karni padti hai (humare case mein, git fetch origin). Ye command check karti hai ki "origin" kaun sa server hai (hamare case mein, ye git.ourcompany.com hai), aur koi bhi data fetch karti hai jo ab tak aapke paas nahi hai. Ye aapke local database ko update karti hai aur aapka origin/master pointer ko naye aur updated commit tak le jaati hai.
+### Pushing
+Git mein agar aapko apni branch remote server par push karni hai, toh aapko kuch commands use karni padengi. Pushing ka matlab hai ki aap apne local repository ke changes ko remote repository mein bhej rahe ho, taaki dusre log bhi unhe dekh aur use kar sakein.
+
+Basic Push Command
+Aapko remote repository (jaise origin) aur branch ka naam dena hota hai jise aap push karna chahte ho. Example:
+```
+$ git push origin master
+```
+Yeh command aapki local master branch ke changes ko origin remote ke master branch par push kar dega.
+
+Nayi Branch Push Karna
+Agar aap ek nayi branch push kar rahe ho, jo remote par ab tak exist nahi karti, toh simply branch ka naam dal kar push kar do:
+
+```
+$ git push origin <branch-name>
+```
+Example:
+```
+$ git push origin feature-branch
+```
+Yeh command local feature-branch ko remote par push karegi.
+
+Branch Rename Karke Push Karna
+Aap apni local branch ko remote par ek alag naam ke saath push kar sakte ho. Iske liye local branch ke baad remote branch ka naam dena hota hai:
+```
+$ git push origin <local-branch>:<remote-branch>
+```
+Example:
+```
+$ git push origin bugfix:new-feature-branch
+```
+Yeh command local bugfix branch ko remote par new-feature-branch naam se push karegi.
+
+Password Baar Baar Na Dalna
+Agar aap HTTPS URL use kar rahe ho aur baar-baar username aur password dalna nahi chahte, toh aap credential cache set kar sakte ho:
+```
+$ git config --global credential.helper cache
+```
+Remote Branch Delete Karna
+Agar aap remote par kisi branch ko delete karna chahte ho, toh is command ka use karo:
+
+```
+$ git push origin --delete <branch-name>
+```
+Example:
+```
+$ git push origin --delete feature-branch
+```
+Yeh command feature-branch ko remote server se delete kar degi.
+
+Sabhi Remote Changes Ko Update Karna
+Push karne se pehle, hamesha git fetch command use karo taaki aapke paas latest remote changes hoon:
+```
+$ git fetch origin
+```
+#### Push with Force
+Agar push karte waqt conflicts aate hain, aur aapko changes ko zabardasti push karna ho, toh force push karne ke liye:
+```
+$ git push origin master --force
+```
+Lekin force push karna risk hota hai, kyunki isse dusre logon ke commits overwrite ho sakte hain.
+### Tracking Branch in Git
+Tracking branch ek local branch hoti hai jo kisi remote branch ko follow karti hai. Isse git pull aur git push commands remote branch ke saath sync ho jaate hain.
+
+Commands:
+Automatically track on clone:
+```
+$ git clone https://github.com/user/repo.git
+```
+(Automatically tracks origin/master.)
+
+Create a tracking branch:
+
+```
+$ git checkout --track origin/<remote-branch>
+```
+Example:
+```
+$ git checkout --track origin/feature-branch
+```
+Shortcut for tracking branch (auto track):
+```
+$ git checkout <branch>
+```
+Set tracking branch manually:
+```
+$ git branch --set-upstream-to=origin/<remote-branch> <local-branch>
+```
+Check tracking branches status:
+```
+$ git branch -vv
+```
+### Pulling in Git
+Pulling ka matlab hota hai ki aap apne local repository ko remote repository ke latest changes ke saath sync karte hain. git pull command do kaam karta hai: pehle changes fetch karta hai aur phir unhe merge karta hai.
+
+Common git pull Commands:
+- Basic git pull: Remote branch se latest changes fetch aur merge karta hai.
+```
+$ git pull
+```
+(Ye command current branch ke remote-tracking branch ko pull karta hai.)
+
+Specific branch ko pull karna: Agar aap ek specific branch ko pull karna chahte ho:
+```
+$ git pull origin <branch-name>
+```
+Example:
+```
+$ git pull origin master
+```
+Fetch aur merge ko manually karna: Pull ke bajaye aap fetch aur merge alag alag bhi kar sakte ho:
+
+Fetch latest changes:
+```
+$ git fetch origin
+```
+Merge changes manually:
+```
+$ git merge origin/<branch-name>
+```
+Rebase ke saath pull karna: Agar aap pull karte waqt merge ki jagah rebase karna chahein:
+```
+$ git pull --rebase
+```
+All branches ke liye pull: Sabhi branches ke changes ko pull karne ke liye pehle fetch karein, fir manually merge karein:
+
+```
+$ git fetch --all
+$ git merge
+```
+Pull without merge conflicts automatically: Agar aap auto-merge karna chahte ho bina manual conflicts handle kiye:
+```
+$ git pull --no-commit
+```
+### Rebase
+Rebasing ka matlab hai ek branch ke commits ko doosri branch ke latest snapshot ke upar apply karna. Jab aap rebase karte ho, Git aapke commits ko ek ek karke nayi base branch ke upar apply karta hai. Isse ek linear history ban jaati hai, jo clean aur simple dikhayi deti hai.
+
+Rebase ko detail mein samajhne ke liye, hum isse step by step breakdown karte hain.
+
+- Step 1: Current Situation Ko Samjho
+Aapke paas do branches hain:
+
+Master branch (main branch jisme final code hota hai)
+Experiment branch (jisme aapne kuch naye features add kiye hain)
+Donon branches mein commits alag alag hue hain:
+
+master: C1 → C2 → C3
+experiment: C4 (experiment branch master se alag ho gayi)
+Ab aap chahte ho ki experiment branch ke commits ko master branch ke latest commits ke upar shift karo.
+
+Step 2: Experiment Branch Pe Switch Karna
+Sabse pehle, aapko experiment branch pe checkout karna hoga taaki aap usi branch ko rebase kar sakein.
+
+Command:
+```
+$ git checkout experiment
+```
+Is command se aap experiment branch pe switch ho jaoge.
+
+Step 3: Master Branch Ke Upar Rebase Karna
+Ab, aap experiment branch ko master branch ke upar rebase karenge. Iska matlab hai ki jo changes aapne experiment branch mein kiye hain, wo master ke latest commits ke upar se reapply kar diye jaayenge.
+
+Command:
+```
+$ git rebase master
+```
+Ye command kuch steps follow karta hai:
+
+Donon branches ka common ancestor commit dhundta hai (jo C2 hoga).
+experiment ke commits (C4) ko temporarily store karta hai.
+experiment branch ko master ke latest commit (C3) pe le aata hai.
+C4 ke changes ko C3 ke upar se reapply karta hai.
+Output kuch aisa dikh sakta hai:
+
+```
+First, rewinding head to replay your work on top of it...
+Applying: added feature in experiment
+```
+Ab history kuch aisi ho jaayegi:
+
+master: C1 → C2 → C3
+experiment: C1 → C2 → C3 → C4' (C4 ko ab C3 ke upar apply kiya gaya hai)
+Step 4: Conflict Resolve Karna (Agar Ho Toh)
+Kabhi kabhi, rebase karte waqt conflicts ho sakte hain. Agar aisa hota hai, toh Git aapko conflicts dikhayega aur aapko unhe manually resolve karna padega.
+
+File conflicts ko manually theek karo.
+
+Resolve karne ke baad, staging area mein dalne ke liye command use karo:
+```
+$ git add <conflicted-file>
+```
+Phir rebase ko continue karne ke liye:
+```
+$ git rebase --continue
+```
+Step 5: Fast-forward Merge Karna (Optional)
+Ab agar aap master branch pe switch karte ho aur changes ko merge karte ho, toh wo ek fast-forward merge hoga. Fast-forward merge ka matlab hai ki master ka pointer experiment ke latest commit pe move kar jayega bina koi naya merge commit create kiye.
+
+Commands:
+```
+$ git checkout master
+$ git merge experiment
+```
+Iske baad master branch pe history kuch aisi dikhayi degi:
+
+master: C1 → C2 → C3 → C4'
+History ab clean aur linear hai, koi extra merge commit nahi hai.
+
+Step 6: Rebase Ko Cancel Karna (Agar Kuch Galat Ho Jaaye)
+Agar rebase ke dauran kuch galat ho jaata hai aur aap purane state mein wapas jaana chahte ho, toh aap rebase ko abort kar sakte ho.
+
+Command:
+```
+$ git rebase --abort
+```
+Is command se aapka rebase process cancel ho jayega aur sab kuch wapas purane state mein aa jayega.
+
